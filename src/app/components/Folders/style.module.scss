@@ -1,0 +1,46 @@
+@import "styles/palette";
+@import "styles/mixins";
+
+.content {
+  &_wrapper {
+    margin: 100px 30px 30px 30px;
+    min-height: calc(100vh - 130px);
+    background-color: $white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px $opacityRgba, 0 1px 2px $opacityRgba1;
+  }
+
+  &_header {
+    padding: 15px 30px;
+    border-bottom: 1px solid $grey;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    grid-row-gap: 90px;
+  }
+
+  &_actions {
+    display: grid;
+    grid-template-columns: 38px 38px;
+    grid-column-gap: 10px;
+
+    .icon_wrapper {
+      @include icon_wrapper($grey);
+    }
+
+    .action_icon {
+      fill:  $greyDark;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

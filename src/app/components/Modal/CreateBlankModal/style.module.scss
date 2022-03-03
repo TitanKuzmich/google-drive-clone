@@ -1,0 +1,31 @@
+@import "styles/palette";
+@import "styles/mixins";
+
+.modal {
+  &_header__text {
+    font-size: 18px;
+    color: $white;
+  }
+
+  &_content__input {
+    position: relative;
+
+    input {
+      @include input();
+    }
+
+    @include underline($greyLight, $grey);
+
+    &:focus-within:after {
+      transform: scale(1);
+    }
+  }
+}
+
+
+
+
+
+
+
+
