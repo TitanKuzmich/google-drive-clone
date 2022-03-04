@@ -1,12 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from "react-redux"
 import {useAuthState} from "react-firebase-hooks/auth"
-import cn from "classnames"
+import {useParams} from "react-router-dom"
 
 import * as actions from "state/actions/folders"
+import {ROOT_FOLDER} from "state/reducers/folders"
 import {auth, db} from "lib/firebase"
 import Icon from "components/Icon"
 import CreateFolderModal from "components/Modal/CreateFolderModal"
+import Folder from "components/Folders/Folder"
+import FolderBreadcrumbs from "components/FolderBreadcrumbs"
 
 import style from './style.module.scss'
 import icons from 'assets/svg'
@@ -16,21 +19,28 @@ const Folders = () => {
     const dispatch = useDispatch()
     const {currentFolder} = useSelector(state => state.folders)
 
+    const {folderId} = useParams()
+
     const [folderName, setFolderName] = useState('')
     const [isOpenCreateFolder, setOpenCreateFolder] = useState(false)
 
-
-    console.log(currentFolder)
-
     const createFolder = () => {
-        if(currentFolder == null) return
+        if (currentFolder == null) return
+
+        console.log(currentFolder)
+        const path = [...currentFolder.folder.path]
+        if(currentFolder.folder !== ROOT_FOLDER) {
+            path.push({ folderName: currentFolder.folder.folderName, id: currentFolder.folder.id })
+            console.log(path)
+        }
+
         db
             .folders
             .add({
                 userId: user.uid,
                 folderName: folderName,
-                parentId: currentFolder.id,
-                // path
+                parentId: folderId || null,
+                path: path,
                 createdAt: db.getCurrentTimestamp
 
             })
@@ -46,22 +56,32 @@ const Folders = () => {
 
     useEffect(() => {
         dispatch(actions.selectFolder({
-            id: currentFolder.id,
+            id: folderId || null,
             folder: currentFolder.folder
         }))
-    }, [currentFolder.id, currentFolder.folder])
+    }, [folderId, currentFolder.folder])
 
-    useEffect(() => {
-        if(currentFolder.id == null) return dispatch(actions.updateFolder())
+    useEffect(async() => {
+        if (!folderId) return dispatch(actions.updateFolder())
 
-        db.folders
-            .doc(currentFolder.id)
+        await db.folders
+            .doc(folderId)
             .get()
             .then(doc => {
                 dispatch(actions.updateFolder(db.formatDoc(doc)))
             })
             .catch(() => dispatch(actions.updateFolder()))
-    }, [currentFolder.id])
+    }, [folderId])
+
+    useEffect(() => {
+        return db.folders
+            .where('parentId', '==', folderId || null)
+            .where('userId', '==', user.uid)
+            .orderBy('createdAt')
+            .onSnapshot(snapshot => {
+                dispatch(actions.setChildFolders(snapshot.docs.map(db.formatDoc)))
+            })
+    }, [folderId, user])
 
     return (
         <div className={style.content_wrapper}>
@@ -74,7 +94,7 @@ const Folders = () => {
                 />
             )}
             <div className={style.content_header}>
-                <div className={style.breadcrumbs_wrapper}>Breadcrumbs</div>
+                <FolderBreadcrumbs currentFolder={currentFolder.folder}/>
 
                 <div className={style.content_actions}>
                     <div className={style.icon_wrapper}>
@@ -86,6 +106,16 @@ const Folders = () => {
                         <Icon className={style.action_icon} icon={icons.UploadFolder}/>
                     </div>
                 </div>
+            </div>
+
+            <div className={style.content_folders}>
+                {currentFolder.childFolders.length > 0 && (
+                    <div className={style.content_folders_wrapper}>
+                        {currentFolder.childFolders.map(childFolder => (
+                            <Folder key={childFolder.id} folder={childFolder}/>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     )

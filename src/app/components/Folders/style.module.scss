@@ -16,7 +16,7 @@
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
-    grid-row-gap: 90px;
+    grid-column-gap: 90px;
   }
 
   &_actions {
@@ -31,6 +31,16 @@
 
     .action_icon {
       fill:  $greyDark;
+    }
+  }
+
+  &_folders {
+    padding: 15px 30px;
+
+    &_wrapper {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, 160px);
+      gap: 44px;
     }
   }
 }

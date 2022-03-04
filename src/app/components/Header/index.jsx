@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from "react-redux"
+import {useNavigate} from "react-router-dom"
 import {useAuthState} from "react-firebase-hooks/auth"
 import cn from "classnames"
 
@@ -12,10 +13,9 @@ import icons from 'assets/svg'
 
 const Header = () => {
     const [user] = useAuthState(auth)
-    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const [isInfoOpen, setInfoOpen] = useState(false)
-    const [timer, setTimer] = useState(0)
 
     const popupRef = useRef(null)
 
@@ -37,7 +37,7 @@ const Header = () => {
 
     return (
         <div className={style.header}>
-            <div className={style.header_logo}>
+            <div className={style.header_logo} onClick={() => navigate('/drive')}>
                 <img src={images.DriveLogo} alt="logo"/>
                 <p>Drive</p>
             </div>

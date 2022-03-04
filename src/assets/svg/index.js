@@ -6,6 +6,8 @@ import Close from "./close.svg"
 import Google from "./google.svg"
 import UploadFile from "./file-upload.svg"
 import UploadFolder from "./folder-upload.svg"
+import Folder from "./folder.svg"
+import Next from "./next.svg"
 
 const icons = {
     Search,
@@ -16,6 +18,8 @@ const icons = {
     Google,
     UploadFile,
     UploadFolder,
+    Folder,
+    Next
 }
 
 export default icons

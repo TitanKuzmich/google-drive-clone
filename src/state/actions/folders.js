@@ -6,3 +6,4 @@ export const getFolderListFail = createAction("GET_FOLDER_LIST_FAIL")
 
 export const selectFolder = createAction("SELECT_FOLDER")
 export const updateFolder = createAction("UPDATE_FOLDER")
+export const setChildFolders = createAction("UPDATE_CHILD_FOLDER")

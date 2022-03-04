@@ -17,6 +17,11 @@ const InitialRouting = () => {
                     path="/drive"
                     element={<HomeScreen/>}
                 />
+
+                <Route
+                    path="/drive/:folderId"
+                    element={<HomeScreen/>}
+                />
             </Routes>
         </>
     )

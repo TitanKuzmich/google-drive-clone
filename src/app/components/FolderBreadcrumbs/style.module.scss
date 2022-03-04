@@ -1,0 +1,46 @@
+@import "styles/palette";
+@import "styles/mixins";
+
+.breadcrumbs {
+  &_wrapper {
+    background-color: $white;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  &_item {
+    max-width: 150px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 22px;
+    font-weight: 500;
+    color: $greyDark;
+    cursor: pointer;
+
+    &__active {
+      color: $black;
+      cursor: default;
+    }
+  }
+
+  &_icon {
+    margin: 3px 7px 0 7px;
+    fill: $greyDark;
+    height: 14px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

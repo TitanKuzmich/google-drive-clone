@@ -2,7 +2,7 @@ import { createReducer } from "redux-act"
 
 import * as actions from "../actions/folders"
 
-const ROOT_FOLDER = {id: null, name: 'Root', path: []}
+export const ROOT_FOLDER = {id: null, folderName: 'Root', path: []}
 
 const defaultState = {
     isLoading: false,
@@ -46,17 +46,27 @@ const folders = createReducer(
             }
         },
         [actions.updateFolder.getType()](state, payload) {
-            // console.log(payload)
             const updatedFolder = {
                 ...state.currentFolder,
                 folder: payload?.id
-                    ? payload
+                    ? {...state.currentFolder.folder, ...payload}
                     : ROOT_FOLDER
             }
 
             return {
                 ...state,
                 currentFolder: updatedFolder
+            }
+        },
+        [actions.setChildFolders.getType()](state, payload) {
+            const childFolders = {
+                ...state.currentFolder,
+                childFolders: payload
+            }
+
+            return {
+                ...state,
+                currentFolder: childFolders
             }
         },
     },
