@@ -3,40 +3,76 @@ import {useDispatch, useSelector} from "react-redux"
 import {useAuthState} from "react-firebase-hooks/auth"
 import cn from "classnames"
 
-import {auth} from "lib/firebase"
+import * as actions from "state/actions/folders"
+import {auth, db} from "lib/firebase"
 import Icon from "components/Icon"
+import CreateFolderModal from "components/Modal/CreateFolderModal"
 
 import style from './style.module.scss'
-import images from 'assets/img'
 import icons from 'assets/svg'
 
 const Folders = () => {
     const [user] = useAuthState(auth)
     const dispatch = useDispatch()
+    const {currentFolder} = useSelector(state => state.folders)
 
-    const [isInfoOpen, setInfoOpen] = useState(false)
-    const [timer, setTimer] = useState(0)
+    const [folderName, setFolderName] = useState('')
+    const [isOpenCreateFolder, setOpenCreateFolder] = useState(false)
 
-    const popupRef = useRef(null)
 
-    const onSignOut = async () => {
-        await auth.signOut()
+    console.log(currentFolder)
+
+    const createFolder = () => {
+        if(currentFolder == null) return
+        db
+            .folders
+            .add({
+                userId: user.uid,
+                folderName: folderName,
+                parentId: currentFolder.id,
+                // path
+                createdAt: db.getCurrentTimestamp
+
+            })
+            .then(() => {
+                setFolderName('')
+                setOpenCreateFolder(false)
+            })
+    }
+
+    const uploadFile = () => {
+
     }
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (popupRef?.current && !popupRef?.current.contains(event.target)) {
-                event.stopPropagation()
-                setInfoOpen(false)
-            }
-        }
+        dispatch(actions.selectFolder({
+            id: currentFolder.id,
+            folder: currentFolder.folder
+        }))
+    }, [currentFolder.id, currentFolder.folder])
 
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [popupRef])
+    useEffect(() => {
+        if(currentFolder.id == null) return dispatch(actions.updateFolder())
+
+        db.folders
+            .doc(currentFolder.id)
+            .get()
+            .then(doc => {
+                dispatch(actions.updateFolder(db.formatDoc(doc)))
+            })
+            .catch(() => dispatch(actions.updateFolder()))
+    }, [currentFolder.id])
 
     return (
         <div className={style.content_wrapper}>
+            {isOpenCreateFolder && (
+                <CreateFolderModal
+                    onConfirmAction={createFolder}
+                    onCloseAction={() => setOpenCreateFolder(false)}
+                    name={folderName}
+                    setName={setFolderName}
+                />
+            )}
             <div className={style.content_header}>
                 <div className={style.breadcrumbs_wrapper}>Breadcrumbs</div>
 
@@ -44,7 +80,9 @@ const Folders = () => {
                     <div className={style.icon_wrapper}>
                         <Icon className={style.action_icon} icon={icons.UploadFile}/>
                     </div>
-                    <div className={style.icon_wrapper}>
+                    <div
+                        className={style.icon_wrapper}
+                        onClick={() => setOpenCreateFolder(true)}>
                         <Icon className={style.action_icon} icon={icons.UploadFolder}/>
                     </div>
                 </div>

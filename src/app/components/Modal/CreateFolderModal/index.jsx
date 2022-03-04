@@ -4,11 +4,11 @@ import Modal from "components/Modal"
 
 import style from './style.module.scss'
 
-const CreateBlankModal = ({onConfirmAction, onCloseAction, name, setName}) => {
+const CreateFolderModal = ({onConfirmAction, onCloseAction, name, setName}) => {
 
     const header = () => {
         return (
-            <span className={style.modal_header__text}>Create New Document</span>
+            <span className={style.modal_header__text}>Create New Folder</span>
         )
     }
 
@@ -16,7 +16,7 @@ const CreateBlankModal = ({onConfirmAction, onCloseAction, name, setName}) => {
         return (
             <div className={style.modal_content__input}>
                 <input
-                    placeholder="Enter document name"
+                    placeholder="Enter folder name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     type="text"
@@ -35,4 +35,4 @@ const CreateBlankModal = ({onConfirmAction, onCloseAction, name, setName}) => {
     )
 }
 
-export default CreateBlankModal
+export default CreateFolderModal

@@ -26,6 +26,7 @@
 
     .icon_wrapper {
       @include icon_wrapper($grey);
+      padding-left: 9px;
     }
 
     .action_icon {

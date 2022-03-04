@@ -14,6 +14,9 @@ const firestore = firebaseApp.firestore()
 const db = {
     files: firestore.collection('files'),
     folders: firestore.collection('folders'),
+    formatDoc: doc => {
+        return {id: doc.id, ...doc.data()}
+    },
     getCurrentTimestamp: firebase.firestore.FieldValue.serverTimestamp()
 }
 const auth = firebase.auth()
