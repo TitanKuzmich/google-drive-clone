@@ -45,6 +45,44 @@
   }
 }
 
+.action_folder, .action_file {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid $greenLight;
+  transition: all .3s ease;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  &_data {
+    color: $black;
+    margin-left: 12px;
+
+    div {
+      max-width: 98px;
+      font-size: 16px;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+
+  &_icon {
+    width: 24px;
+    fill: $black;
+  }
+
+  &:hover {
+    border: 1px solid $green;
+    box-shadow: $rgbaColor6 0px 1px 0px;
+  }
+}
+
 
 
 

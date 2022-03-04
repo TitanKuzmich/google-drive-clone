@@ -16,11 +16,10 @@ const FolderBreadcrumbs = ({currentFolder}) => {
 
     return (
         <div className={style.breadcrumbs_wrapper}>
-            {path.map((folder, ind) => (
-                <>
+            {path.map((folder) => (
+                <div key={nextId()}>
                     {folder.id && <Icon icon={icons.Next} classIcon={style.breadcrumbs_icon}/>}
                     <div
-                        key={`${nextId()}`}
                         className={style.breadcrumbs_item}
                         onClick={() => folder.id
                             ? navigate(`/drive/${folder.id}`)
@@ -28,11 +27,11 @@ const FolderBreadcrumbs = ({currentFolder}) => {
                     >
                         {folder.folderName}
                     </div>
-                </>
+                </div>
             ))}
             {currentFolder && (
                 <>
-                    <Icon icon={icons.Next} classIcon={style.breadcrumbs_icon}/>
+                    {currentFolder.id && <Icon icon={icons.Next} classIcon={style.breadcrumbs_icon}/>}
                     <div className={cn(style.breadcrumbs_item, style.breadcrumbs_item__active)}>
                         {currentFolder.folderName}
                     </div>

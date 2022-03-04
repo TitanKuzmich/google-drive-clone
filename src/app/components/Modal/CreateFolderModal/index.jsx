@@ -2,7 +2,7 @@ import React from 'react'
 
 import Modal from "components/Modal"
 
-import style from './style.module.scss'
+import style from '../style.module.scss'
 
 const CreateFolderModal = ({onConfirmAction, onCloseAction, name, setName}) => {
 

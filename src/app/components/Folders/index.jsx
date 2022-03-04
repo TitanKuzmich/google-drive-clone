@@ -5,9 +5,10 @@ import {useParams} from "react-router-dom"
 
 import * as actions from "state/actions/folders"
 import {ROOT_FOLDER} from "state/reducers/folders"
-import {auth, db} from "lib/firebase"
+import {auth, db, storage} from "lib/firebase"
 import Icon from "components/Icon"
 import CreateFolderModal from "components/Modal/CreateFolderModal"
+import UploadFileModal from "components/Modal/UploadFileModal"
 import Folder from "components/Folders/Folder"
 import FolderBreadcrumbs from "components/FolderBreadcrumbs"
 
@@ -23,14 +24,19 @@ const Folders = () => {
 
     const [folderName, setFolderName] = useState('')
     const [isOpenCreateFolder, setOpenCreateFolder] = useState(false)
+    const [isOpenUploadFile, setOpenUploadFile] = useState(false)
+    const [data, setData] = useState({
+        file: null,
+        fullFilePath: "",
+    })
 
     const createFolder = () => {
         if (currentFolder == null) return
 
         console.log(currentFolder)
         const path = [...currentFolder.folder.path]
-        if(currentFolder.folder !== ROOT_FOLDER) {
-            path.push({ folderName: currentFolder.folder.folderName, id: currentFolder.folder.id })
+        if (currentFolder.folder !== ROOT_FOLDER) {
+            path.push({folderName: currentFolder.folder.folderName, id: currentFolder.folder.id})
             console.log(path)
         }
 
@@ -51,7 +57,7 @@ const Folders = () => {
     }
 
     const uploadFile = () => {
-
+        storage.ref(data.fullFilePath).put(data.file)
     }
 
     useEffect(() => {
@@ -61,7 +67,7 @@ const Folders = () => {
         }))
     }, [folderId, currentFolder.folder])
 
-    useEffect(async() => {
+    useEffect(async () => {
         if (!folderId) return dispatch(actions.updateFolder())
 
         await db.folders
@@ -93,16 +99,28 @@ const Folders = () => {
                     setName={setFolderName}
                 />
             )}
+            {isOpenUploadFile && (
+                <UploadFileModal
+                    currentFolder={currentFolder.folder}
+                    setData={setData}
+                    onConfirmAction={uploadFile}
+                    onCloseAction={() => setOpenUploadFile(false)}
+                />
+            )}
             <div className={style.content_header}>
                 <FolderBreadcrumbs currentFolder={currentFolder.folder}/>
 
                 <div className={style.content_actions}>
-                    <div className={style.icon_wrapper}>
+                    <div
+                        className={style.icon_wrapper}
+                        onClick={() => setOpenUploadFile(true)}
+                    >
                         <Icon className={style.action_icon} icon={icons.UploadFile}/>
                     </div>
                     <div
                         className={style.icon_wrapper}
-                        onClick={() => setOpenCreateFolder(true)}>
+                        onClick={() => setOpenCreateFolder(true)}
+                    >
                         <Icon className={style.action_icon} icon={icons.UploadFolder}/>
                     </div>
                 </div>

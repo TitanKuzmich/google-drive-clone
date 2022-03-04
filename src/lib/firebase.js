@@ -11,6 +11,7 @@ const firebaseConfig = {
 
 const firebaseApp = firebase.initializeApp(firebaseConfig)
 const firestore = firebaseApp.firestore()
+const storage = firebaseApp.storage()
 const db = {
     files: firestore.collection('files'),
     folders: firestore.collection('folders'),
@@ -22,4 +23,4 @@ const db = {
 const auth = firebase.auth()
 const provider = new firebase.auth.GoogleAuthProvider()
 
-export {auth, db, provider}
+export {auth, db, storage, provider}

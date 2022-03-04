@@ -2,13 +2,13 @@ import React from 'react'
 
 import Modal from "components/Modal"
 
-import style from './style.module.scss'
+import style from '../style.module.scss'
 
 const DeleteModal = ({text, onConfirmAction, onCloseAction}) => {
 
     const header = () => {
         return (
-            <span className={style.modal_header__text}>Confirm document delete</span>
+            <span className={style.modal_header__text}>Confirm document folder</span>
         )
     }
 
