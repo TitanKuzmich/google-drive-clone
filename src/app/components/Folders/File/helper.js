@@ -1,9 +1,10 @@
 import config from "lib/config"
 
-export const getFileName = (name) => {
+export const getFileName = (name, splitLength = config.maxNameLength) => {
     const format = `.${name.split(".").pop()}`
-    if (name.length > config.maxNameLength + format.length) {
-        return `${name.slice(0, config.maxNameLength / 2)}...${name.slice((config.maxNameLength / 2) + 1, config.maxNameLength)}${format}`
+    const fileName = `${name.split(".").shift()}`
+    if (name.length > splitLength + format.length) {
+        return `${name.slice(0, splitLength / 2)}...${name.slice((splitLength / 2) + 1, fileName.length)}${format}`
     }
 
     return name

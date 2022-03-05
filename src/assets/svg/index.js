@@ -11,6 +11,7 @@ import File from "./file.svg"
 import Next from "./next.svg"
 import Preview from "./preview.svg"
 import Download from "./download.svg"
+import Delete from "./delete.svg"
 
 const icons = {
     Search,
@@ -25,7 +26,8 @@ const icons = {
     File,
     Next,
     Preview,
-    Download
+    Download,
+    Delete
 }
 
 export default icons

@@ -29,12 +29,9 @@ const Folders = () => {
     const [isOpenPreviewFile, setOpenPreviewFile] = useState(false)
 
     const [folderName, setFolderName] = useState('')
-    const [data, setData] = useState({
-        file: null,
-        fileUrl: '',
-        fileFullPath: ''
-    })
+    const [data, setData] = useState([])
     const [confirmUpload, setConfirmUpload] = useState(false)
+    const [uploaded, setUploaded] = useState(false)
     const [file, setFile] = useState({})
 
     const createFolder = () => {
@@ -61,18 +58,58 @@ const Folders = () => {
             })
     }
 
-    const uploadFile = () => {
-        if(!confirmUpload) return
+    const closeUploadModal = () => {
+        if (confirmUpload) setOpenUploadFile(false)
 
-        db
-            .files
-            .add({
-                url: data.fileUrl,
-                name: data.file.name,
-                createdAt: db.getCurrentTimestamp,
-                folderId: currentFolder.folder.id,
-                userId: user.uid
+        if(!uploaded) {
+            Promise.all(data.map(item => {
+                return storage
+                    .ref(item.fileFullPath)
+                    .delete()
+            }))
+                .then(() =>{
+                    setUploaded(true)
+                    setConfirmUpload(false)
+                    setData([])
+                    setOpenUploadFile(false)
+                })
+        }
+    }
+
+    const uploadFile = () => {
+        if (!confirmUpload) return
+
+        Promise.all(data.map(item => {
+            return db.files
+                .where("name", "==", item.file.name)
+                .where("userId", "==", user.uid)
+                .where("folderId", "==", currentFolder.folder.id)
+                .get()
+                .then(existingFiles => {
+                    const existingFile = existingFiles.docs[0]
+                    if (existingFile) {
+                        existingFile.ref.update({url: item.fileUrl})
+                    } else {
+                        db
+                            .files
+                            .add({
+                                url: item.fileUrl,
+                                name: item.file.name,
+                                createdAt: db.getCurrentTimestamp,
+                                folderId: currentFolder.folder.id,
+                                userId: user.uid
+                            })
+                            .then(() => setData([]))
+                    }
+                })
+        }))
+            .then(() => {
+                setUploaded(true)
+                setConfirmUpload(false)
+                setData([])
+                setOpenUploadFile(false)
             })
+            .catch(e => console.log(e.message))
     }
 
     useEffect(() => {
@@ -133,10 +170,11 @@ const Folders = () => {
                 <UploadFileModal
                     fileLink={file}
                     currentFolder={currentFolder.folder}
+                    data={data}
                     setData={setData}
                     setConfirmUpload={setConfirmUpload}
                     onConfirmAction={uploadFile}
-                    onCloseAction={() => setOpenUploadFile(false)}
+                    onCloseAction={closeUploadModal}
                 />
             )}
 

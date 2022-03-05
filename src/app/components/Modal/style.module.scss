@@ -100,6 +100,42 @@
       }
     }
 
+    .uploaded {
+      &_files {
+        margin-top: 20px;
+        max-height: 170px;
+        overflow-y: auto;
+      }
+
+      &_file {
+        padding: 5px 12px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+        border-radius: 6px;
+        color: $greyDark;
+
+        &__done {
+          background-color: $greenLight;
+        }
+
+        &:not(:first-child) {
+          margin-top: 5px;
+        }
+
+        &_delete {
+          fill: $greyDark;
+          cursor: pointer;
+
+          &:hover {
+            fill: $red;
+          }
+        }
+      }
+    }
+
     &__preview {
       position: relative;
       margin-top: 30px;
@@ -164,7 +200,7 @@
       }
 
       .action_icon {
-        fill:  $greyDark;
+        fill: $greyDark;
 
         &:hover {
           fill: $green;
@@ -197,14 +233,13 @@
 }
 
 @keyframes loading {
-  0%{
+  0% {
     left: -45%;
   }
-  100%{
+  100% {
     left: 100%;
   }
 }
-
 
 
 
