@@ -69,6 +69,17 @@ const folders = createReducer(
                 currentFolder: childFolders
             }
         },
+        [actions.setChildFiles.getType()](state, payload) {
+            const childFiles = {
+                ...state.currentFolder,
+                childFiles: payload
+            }
+
+            return {
+                ...state,
+                currentFolder: childFiles
+            }
+        },
     },
     defaultState
 )

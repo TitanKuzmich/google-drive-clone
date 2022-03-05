@@ -1,11 +1,19 @@
 import React, {useEffect, useRef, useState} from 'react'
+import cn from "classnames"
 
 import Icon from "components/Icon"
 
 import style from './style.module.scss'
 import icons from "assets/svg"
 
-const Modal = ({onConfirmAction, onCloseAction, header, content}) => {
+const Modal = ({
+       onConfirmAction,
+       onCloseAction,
+       enableConfirm,
+       header,
+       content,
+       buttons = true
+   }) => {
     const modalRef = useRef(null)
 
     const onConfirm = () => {
@@ -52,14 +60,18 @@ const Modal = ({onConfirmAction, onCloseAction, header, content}) => {
                     {content()}
                 </div>
 
-                <div className={style.modal_footer}>
-                    <div
-                        className={style.modal_submit}
-                        onClick={onConfirm}
-                    >
-                        Submit
+                {buttons && (
+                    <div className={style.modal_footer}>
+                        <div
+                            className={cn(style.modal_submit, {
+                                [style.modal_submit__disabled]: !enableConfirm
+                            })}
+                            onClick={enableConfirm ? onConfirm : () => {}}
+                        >
+                            Submit
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     )

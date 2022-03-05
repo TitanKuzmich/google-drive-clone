@@ -5,7 +5,8 @@ const config = {
     paths: {
 
     },
-    modifyIdle: 1000
+    modifyIdle: 1000,
+    maxNameLength: 10
 }
 
 export default config

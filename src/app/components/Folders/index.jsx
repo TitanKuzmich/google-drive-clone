@@ -7,10 +7,12 @@ import * as actions from "state/actions/folders"
 import {ROOT_FOLDER} from "state/reducers/folders"
 import {auth, db, storage} from "lib/firebase"
 import Icon from "components/Icon"
+import FolderBreadcrumbs from "components/FolderBreadcrumbs"
 import CreateFolderModal from "components/Modal/CreateFolderModal"
 import UploadFileModal from "components/Modal/UploadFileModal"
+import PreviewFileModal from "components/Modal/PreviewFileModal"
 import Folder from "components/Folders/Folder"
-import FolderBreadcrumbs from "components/FolderBreadcrumbs"
+import File from "components/Folders/File"
 
 import style from './style.module.scss'
 import icons from 'assets/svg'
@@ -22,22 +24,25 @@ const Folders = () => {
 
     const {folderId} = useParams()
 
-    const [folderName, setFolderName] = useState('')
     const [isOpenCreateFolder, setOpenCreateFolder] = useState(false)
     const [isOpenUploadFile, setOpenUploadFile] = useState(false)
+    const [isOpenPreviewFile, setOpenPreviewFile] = useState(false)
+
+    const [folderName, setFolderName] = useState('')
     const [data, setData] = useState({
         file: null,
-        fullFilePath: "",
+        fileUrl: '',
+        fileFullPath: ''
     })
+    const [confirmUpload, setConfirmUpload] = useState(false)
+    const [file, setFile] = useState({})
 
     const createFolder = () => {
         if (currentFolder == null) return
 
-        console.log(currentFolder)
         const path = [...currentFolder.folder.path]
         if (currentFolder.folder !== ROOT_FOLDER) {
             path.push({folderName: currentFolder.folder.folderName, id: currentFolder.folder.id})
-            console.log(path)
         }
 
         db
@@ -57,7 +62,17 @@ const Folders = () => {
     }
 
     const uploadFile = () => {
-        storage.ref(data.fullFilePath).put(data.file)
+        if(!confirmUpload) return
+
+        db
+            .files
+            .add({
+                url: data.fileUrl,
+                name: data.file.name,
+                createdAt: db.getCurrentTimestamp,
+                folderId: currentFolder.folder.id,
+                userId: user.uid
+            })
     }
 
     useEffect(() => {
@@ -89,6 +104,20 @@ const Folders = () => {
             })
     }, [folderId, user])
 
+    useEffect(() => {
+        return db.files
+            .where('folderId', '==', folderId || null)
+            .where('userId', '==', user.uid)
+            .orderBy('createdAt')
+            .onSnapshot(snapshot => {
+                dispatch(actions.setChildFiles(snapshot.docs.map(db.formatDoc)))
+            })
+    }, [folderId, user])
+
+    useEffect(() => {
+        uploadFile()
+    }, [confirmUpload])
+
     return (
         <div className={style.content_wrapper}>
             {isOpenCreateFolder && (
@@ -99,14 +128,25 @@ const Folders = () => {
                     setName={setFolderName}
                 />
             )}
+
             {isOpenUploadFile && (
                 <UploadFileModal
+                    fileLink={file}
                     currentFolder={currentFolder.folder}
                     setData={setData}
+                    setConfirmUpload={setConfirmUpload}
                     onConfirmAction={uploadFile}
                     onCloseAction={() => setOpenUploadFile(false)}
                 />
             )}
+
+            {isOpenPreviewFile && (
+                <PreviewFileModal
+                    file={file}
+                    onCloseAction={() => setOpenPreviewFile(false)}
+                />
+            )}
+
             <div className={style.content_header}>
                 <FolderBreadcrumbs currentFolder={currentFolder.folder}/>
 
@@ -131,6 +171,24 @@ const Folders = () => {
                     <div className={style.content_folders_wrapper}>
                         {currentFolder.childFolders.map(childFolder => (
                             <Folder key={childFolder.id} folder={childFolder}/>
+                        ))}
+                    </div>
+                )}
+
+                {currentFolder.childFolders.length > 0
+                && currentFolder.childFiles.length > 0 && (
+                    <div className={style.content_divider}/>
+                )}
+
+                {currentFolder.childFiles.length > 0 && (
+                    <div className={style.content_files_wrapper}>
+                        {currentFolder.childFiles.map(childFile => (
+                            <File
+                                key={childFile.id}
+                                file={childFile}
+                                setFile={setFile}
+                                setOpenPreviewFile={setOpenPreviewFile}
+                            />
                         ))}
                     </div>
                 )}

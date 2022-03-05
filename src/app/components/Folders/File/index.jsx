@@ -1,20 +1,24 @@
 import React from 'react'
-import {useNavigate} from "react-router-dom"
 import dayjs from "dayjs"
 
+import {getFileName} from "components/Folders/File/helper"
 import Icon from "components/Icon"
 
 import fileStyle from '../style.module.scss'
 import icons from "assets/svg"
 
-const File = ({file}) => {
-    const navigate = useNavigate()
+const File = ({file, setFile, setOpenPreviewFile}) => {
+
+    const onPreview = () => {
+        setFile(file)
+        setOpenPreviewFile(true)
+    }
 
     return (
-        <div className={fileStyle.action_file} onClick={() => {navigate(`/drive/${file.id}`)}}>
-            <Icon icon={icons.File} classIcon={fileStyle.action_folder_icon}/>
-            <div className={fileStyle.action_folder_data}>
-                <div>{file.folderName}</div>
+        <div className={fileStyle.action_file} onClick={onPreview}>
+            <Icon icon={icons.File} classIcon={fileStyle.action_file_icon}/>
+            <div className={fileStyle.action_file_data}>
+                <div>{getFileName(file.name)}</div>
                 {file.createdAt && <p>{dayjs(file.createdAt.toDate()).format("MM.DD.YYYY")}</p>}
             </div>
         </div>

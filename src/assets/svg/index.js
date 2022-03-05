@@ -9,6 +9,8 @@ import UploadFolder from "./folder-upload.svg"
 import Folder from "./folder.svg"
 import File from "./file.svg"
 import Next from "./next.svg"
+import Preview from "./preview.svg"
+import Download from "./download.svg"
 
 const icons = {
     Search,
@@ -21,7 +23,9 @@ const icons = {
     UploadFolder,
     Folder,
     File,
-    Next
+    Next,
+    Preview,
+    Download
 }
 
 export default icons
