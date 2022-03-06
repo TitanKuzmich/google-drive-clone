@@ -9,9 +9,9 @@ import icons from "assets/svg"
 const Modal = ({
        onConfirmAction,
        onCloseAction,
-       enableConfirm,
        header,
        content,
+       enableConfirm = true,
        buttons = true
    }) => {
     const modalRef = useRef(null)

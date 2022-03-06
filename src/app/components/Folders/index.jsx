@@ -59,8 +59,6 @@ const Folders = () => {
     }
 
     const closeUploadModal = () => {
-        if (confirmUpload) setOpenUploadFile(false)
-
         if(!uploaded) {
             Promise.all(data.map(item => {
                 return storage
@@ -74,6 +72,8 @@ const Folders = () => {
                     setOpenUploadFile(false)
                 })
         }
+
+        setOpenUploadFile(false)
     }
 
     const uploadFile = () => {
@@ -154,6 +154,10 @@ const Folders = () => {
     useEffect(() => {
         uploadFile()
     }, [confirmUpload])
+
+    useEffect(() => {
+        console.log(isOpenUploadFile)
+    }, [isOpenUploadFile])
 
     return (
         <div className={style.content_wrapper}>
